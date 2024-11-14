@@ -16,10 +16,10 @@ pygame.display.set_caption("9x9 Maze Game")
 # Player starting position
 player_pos = [11, 1]
 
-
 class Agent:
     def __init__(self, score):
         self.score = score
+        self.bonus = 0
 
     def draw_maze(self):
         for row in range(grid_size):
@@ -60,6 +60,7 @@ class Agent:
                     self.score -= 30
             elif maze[new_x][new_y] == 2:
                 print("Bia bazi")
+                self.open_new_window()
                 player_pos[0], player_pos[1] = new_x, new_y
             elif maze[new_x][new_y] == 3:
                 print("Teleport - yellow")
@@ -74,6 +75,20 @@ class Agent:
                 else:
                     player_pos[0], player_pos[1] = 13, 15
         print(self.score)
+
+    def open_new_window(self):
+        # Create a new window
+        new_screen = pygame.display.set_mode((300, 300))
+        new_screen.fill(BLUE)
+        pygame.display.set_caption("Mini Game")
+        waiting_for_key = True
+        while waiting_for_key:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        waiting_for_key = False
+        # Reset to original screen size
+        pygame.display.set_mode((screen_size, screen_size))
 
 
 # Game loop
@@ -116,6 +131,25 @@ while running:
     agent.draw_maze()
     agent.draw_player()
     pygame.display.flip()
+
+    if player_pos == [11, 21]:
+        running = False
+        if agent.bonus > 0:
+            score = agent.score + agent.bonus
+        score = min(4000, agent.score + agent.bonus)
+
+        if score > 3750 and score < 4000:
+            level = "S"
+        elif score > 3650 and score < 3749:
+            level = "A"
+        elif score > 3400 and score < 3649:
+            level = "B"
+        elif score > 0 and score < 3400:
+            level = "C"
+
+
+        print("You successfully completed the maze!!!")
+        print(f"Your rank is {level}")
 
 pygame.quit()
 sys.exit()
