@@ -2,6 +2,7 @@ import pygame
 import sys
 from map import maze
 from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE
+from ImpossibleMaze4 import impossible_maze
 
 # Initialize Pygame
 pygame.init()
@@ -50,8 +51,8 @@ class Agent:
             if maze[new_x][new_y] == 0 or maze[new_x][new_y] == 5:
                 self.score -= 10
                 player_pos[0], player_pos[1] = new_x, new_y
-                matrix[new_x][new_y] += 1
-                current_entrance = matrix[new_x][new_y]
+                matrix_entrance[new_x][new_y] += 1
+                current_entrance = matrix_entrance[new_x][new_y]
                 if current_entrance == 2:
                     maze[new_x][new_y] = 5
                     self.score -= 10
@@ -60,8 +61,9 @@ class Agent:
                     self.score -= 30
             elif maze[new_x][new_y] == 2:
                 print("Bia bazi")
-                self.open_new_window()
-                player_pos[0], player_pos[1] = new_x, new_y
+                state = self.open_new_window(new_x, new_y)
+                if state:
+                   player_pos[0], player_pos[1] = new_x, new_y
             elif maze[new_x][new_y] == 3:
                 print("Teleport - yellow")
                 if new_x == 1:
@@ -76,40 +78,21 @@ class Agent:
                     player_pos[0], player_pos[1] = 13, 15
         print(self.score)
 
-    def open_new_window(self):
-        # Create a new window
-        new_screen = pygame.display.set_mode((300, 300))
-        new_screen.fill(BLUE)
-        pygame.display.set_caption("Mini Game")
-        waiting_for_key = True
-        while waiting_for_key:
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_a:
-                        waiting_for_key = False
-        # Reset to original screen size
-        pygame.display.set_mode((screen_size, screen_size))
+    def open_new_window(self, dx, dy):
+        if dx == 8 and dy == 5:
+            score, is_done = impossible_maze()
+            self.score += score
+            if is_done:
+                maze[dx][dy] = 0
+                return True
+            return False
+
 
 
 # Game loop
 running = True
-
-matrix = []
+matrix_entrance = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
 score = 2000
-
-
-for row in range(grid_size):
-    a = []
-    for column in range(grid_size):
-        a.append(0)
-    matrix.append(a)
-
-# # For printing the matrix
-# for row in range(grid_size):
-#     for column in range(grid_size):
-#         print(matrix[row][column], end=" ")
-#     print()
-
 agent = Agent(score)
 
 while running:
