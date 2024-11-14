@@ -1,6 +1,7 @@
 import pygame
 import sys
 from map import maze
+from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW
 
 # Initialize Pygame
 pygame.init()
@@ -10,17 +11,6 @@ grid_size = 23  # Size of the maze (9x9)
 screen_size = grid_size * cell_size
 screen = pygame.display.set_mode((screen_size, screen_size))
 pygame.display.set_caption("9x9 Maze Game")
-
-# Define colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
-BLUE = (0, 0, 255)
-
-
-
 # Player starting position
 player_pos = [11, 1]
 
