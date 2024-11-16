@@ -18,7 +18,7 @@ pygame.display.set_caption("9x9 Maze Game")
 # Using blit to copy content from one surface to other
 
 # Player starting position
-player_pos = [11, 1]
+player_pos = [10, 13]
 
 arrow_image = pygame.image.load('Images/Arrow.jpg')  # Make sure to have an 'arrow.png' in your directory
 arrow_image = pygame.transform.scale(arrow_image, (cell_size, cell_size))  # Scale it to fit the cell
@@ -28,6 +28,7 @@ class Agent:
         self.score = score
         self.bonus = 0
         self.fog_entrance = 0
+        self.is_in_fog = False
 
     def draw_maze(self):
         for row in range(grid_size):
@@ -64,6 +65,8 @@ class Agent:
         new_y = player_pos[1] + dy
         if 0 <= new_x < grid_size and 0 <= new_y < grid_size:
             if maze[new_x][new_y] == 0 or maze[new_x][new_y] == 5:
+                self.is_in_fog = False
+                self.fog_entrance += 1
                 self.score -= 10
                 player_pos[0], player_pos[1] = new_x, new_y
                 matrix_entrance[new_x][new_y] += 1
@@ -75,22 +78,42 @@ class Agent:
                     maze[new_x][new_y] = 6
                     self.score -= 30
             elif maze[new_x][new_y] == 2:
+                self.is_in_fog = False
+                self.fog_entrance += 1
                 print("Bia bazi")
                 state = self.open_new_window(new_x, new_y)
                 if state:
                     player_pos[0], player_pos[1] = new_x, new_y
             elif maze[new_x][new_y] == 3:
+                self.is_in_fog = False
+                self.fog_entrance += 1
                 print("Teleport - yellow")
                 if new_x == 1:
                     player_pos[0], player_pos[1] = 21, 5
                 else:
                     player_pos[0], player_pos[1] = 1, 15
             elif maze[new_x][new_y] == 4:
+                self.is_in_fog = False
+                self.fog_entrance += 1
                 print("Teleport - blue")
                 if new_x == 13:
                     player_pos[0], player_pos[1] = 3, 9
                 else:
                     player_pos[0], player_pos[1] = 13, 15
+            elif maze[new_x][new_y] == 7:
+                if self.fog_entrance < 2:
+                    if Fog_matrix[new_x - 11][new_y - 13] == 0:
+                        print("khali")
+
+                    elif Fog_matrix[new_x - 11][new_y - 13] == 1:
+                        print("divar")
+
+                    elif Fog_matrix[new_x - 11][new_y - 13] == 4:
+                        print("siah")
+
+                    self.is_in_fog = True
+                    player_pos[0], player_pos[1] = new_x, new_y
+
         print(self.score)
 
     def is_traped(self):
