@@ -1,7 +1,8 @@
 import pygame
 import sys
 from map import maze
-from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE
+from fog import Fog_matrix
+from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE, LIGHT_BLUE
 from ImpossibleMaze4 import impossible_maze
 
 # Initialize Pygame
@@ -42,6 +43,8 @@ class Agent:
                     color = YELLOW
                 elif maze[row][col] == 6:
                     color = RED
+                elif maze[row][col] == 7:
+                    color = LIGHT_BLUE
                 else:
                     color = BLACK
                 pygame.draw.rect(screen, color, (col * cell_size, row * cell_size, cell_size, cell_size))
@@ -113,6 +116,7 @@ class Agent:
 # Game loop
 running = True
 matrix_entrance = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
+
 score = 2000
 agent = Agent(score)
 
