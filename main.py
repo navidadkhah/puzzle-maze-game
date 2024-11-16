@@ -27,6 +27,7 @@ class Agent:
     def __init__(self, score):
         self.score = score
         self.bonus = 0
+        self.fog_entrance = 0
 
     def draw_maze(self):
         for row in range(grid_size):
@@ -50,8 +51,11 @@ class Agent:
                 pygame.draw.rect(screen, color, (col * cell_size, row * cell_size, cell_size, cell_size))
 
     def draw_player(self):
-        pygame.draw.rect(screen, GREEN, (player_pos[1] * cell_size, player_pos[0] * cell_size, cell_size, cell_size))
-          # Show arrow image at specific location
+        # Draw player
+        center_x = player_pos[1] * cell_size + cell_size // 2
+        center_y = player_pos[0] * cell_size + cell_size // 2
+        pygame.draw.circle(screen, GREEN, (center_x, center_y), cell_size // 2)
+        # Draw entrance and exit
         screen.blit(arrow_image, (0 * cell_size, 11 * cell_size))
         screen.blit(arrow_image, (21 * cell_size, 11 * cell_size))
 
