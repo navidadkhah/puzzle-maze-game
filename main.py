@@ -17,6 +17,7 @@ pygame.display.set_caption("9x9 Maze Game")
 # Player starting position
 player_pos = [11, 1]
 
+
 class Agent:
     def __init__(self, score):
         self.score = score
@@ -63,7 +64,7 @@ class Agent:
                 print("Bia bazi")
                 state = self.open_new_window(new_x, new_y)
                 if state:
-                   player_pos[0], player_pos[1] = new_x, new_y
+                    player_pos[0], player_pos[1] = new_x, new_y
             elif maze[new_x][new_y] == 3:
                 print("Teleport - yellow")
                 if new_x == 1:
@@ -78,6 +79,15 @@ class Agent:
                     player_pos[0], player_pos[1] = 13, 15
         print(self.score)
 
+    def Is_traped(self):
+        if (maze[player_pos[0] + 1][player_pos[1]] == 1 or maze[player_pos[0] + 1][player_pos[1]] == 6) \
+                and (maze[player_pos[0] - 1][player_pos[1]] == 1 or maze[player_pos[0] - 1][player_pos[1]] == 6) \
+                and (maze[player_pos[0]][player_pos[1] + 1] == 1 or maze[player_pos[0]][player_pos[1] + 1] == 6) \
+                and (maze[player_pos[0]][player_pos[1] - 1] == 1 or maze[player_pos[0]][player_pos[1] - 1] == 6):
+            return True
+        else:
+            return False
+
     def open_new_window(self, dx, dy):
         if dx == 8 and dy == 5:
             score, is_done = impossible_maze()
@@ -86,7 +96,6 @@ class Agent:
                 maze[dx][dy] = 0
                 return True
             return False
-
 
 
 # Game loop
@@ -130,9 +139,12 @@ while running:
         elif score > 0 and score < 3400:
             level = "C"
 
-
         print("You successfully completed the maze!!!")
         print(f"Your rank is {level}")
+
+    if agent.Is_traped():
+        running = False
+        print("You are a loser")
 
 pygame.quit()
 sys.exit()
