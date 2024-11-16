@@ -14,9 +14,13 @@ screen_size = grid_size * cell_size
 screen = pygame.display.set_mode((screen_size, screen_size))
 pygame.display.set_caption("9x9 Maze Game")
 
+# Using blit to copy content from one surface to other
+
 # Player starting position
 player_pos = [11, 1]
 
+arrow_image = pygame.image.load('Images/Arrow.jpg')  # Make sure to have an 'arrow.png' in your directory
+arrow_image = pygame.transform.scale(arrow_image, (cell_size, cell_size))  # Scale it to fit the cell
 
 class Agent:
     def __init__(self, score):
@@ -44,6 +48,9 @@ class Agent:
 
     def draw_player(self):
         pygame.draw.rect(screen, GREEN, (player_pos[1] * cell_size, player_pos[0] * cell_size, cell_size, cell_size))
+          # Show arrow image at specific location
+        screen.blit(arrow_image, (0 * cell_size, 11 * cell_size))
+        screen.blit(arrow_image, (21 * cell_size, 11 * cell_size))
 
     def move_player(self, dx, dy):
         new_x = player_pos[0] + dx
@@ -79,7 +86,7 @@ class Agent:
                     player_pos[0], player_pos[1] = 13, 15
         print(self.score)
 
-    def Is_traped(self):
+    def is_traped(self):
         if (maze[player_pos[0] + 1][player_pos[1]] == 1 or maze[player_pos[0] + 1][player_pos[1]] == 6) \
                 and (maze[player_pos[0] - 1][player_pos[1]] == 1 or maze[player_pos[0] - 1][player_pos[1]] == 6) \
                 and (maze[player_pos[0]][player_pos[1] + 1] == 1 or maze[player_pos[0]][player_pos[1] + 1] == 6) \
@@ -91,7 +98,12 @@ class Agent:
     def open_new_window(self, dx, dy):
         if dx == 8 and dy == 5:
             score, is_done = impossible_maze()
-            self.score += score
+            temp_score = self.score + score
+            if temp_score > 2000:
+                self.bonus = self.score % 2000
+                self.score = 2000
+            else:
+                self.score += score
             if is_done:
                 maze[dx][dy] = 0
                 return True
@@ -126,6 +138,7 @@ while running:
 
     if player_pos == [11, 21]:
         running = False
+        score = agent.score + 2000
         if agent.bonus > 0:
             score = agent.score + agent.bonus
         score = min(4000, agent.score + agent.bonus)
@@ -142,7 +155,7 @@ while running:
         print("You successfully completed the maze!!!")
         print(f"Your rank is {level}")
 
-    if agent.Is_traped():
+    if agent.is_traped():
         running = False
         print("You are a loser")
 
