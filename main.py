@@ -23,11 +23,15 @@ player_pos = [10, 13]
 arrow_image = pygame.image.load('Images/Arrow.jpg')  # Make sure to have an 'arrow.png' in your directory
 arrow_image = pygame.transform.scale(arrow_image, (cell_size, cell_size))  # Scale it to fit the cell
 
+
 class Agent:
     def __init__(self, score):
         self.score = score
         self.bonus = 0
         self.fog_entrance = 0
+        self.fog_entrance_capacity = 3
+        self.player_x_before_fog = 0
+        self.player_y_before_fog = 0
         self.is_in_fog = False
 
     def draw_maze(self):
@@ -64,9 +68,13 @@ class Agent:
         new_x = player_pos[0] + dx
         new_y = player_pos[1] + dy
         if 0 <= new_x < grid_size and 0 <= new_y < grid_size:
-            if maze[new_x][new_y] == 0 or maze[new_x][new_y] == 5:
+            if new_x - 11 < 0 or new_x - 11 > 2 or new_y - 13 < 0 or new_y - 13 > 2:
                 self.is_in_fog = False
-                self.fog_entrance += 1
+                self.player_y_before_fog = 0
+                self.player_x_before_fog = 0
+                self.fog_entrance = 0
+
+            if maze[new_x][new_y] == 0 or maze[new_x][new_y] == 5:
                 self.score -= 10
                 player_pos[0], player_pos[1] = new_x, new_y
                 matrix_entrance[new_x][new_y] += 1
@@ -92,27 +100,36 @@ class Agent:
                     player_pos[0], player_pos[1] = 21, 5
                 else:
                     player_pos[0], player_pos[1] = 1, 15
-            elif maze[new_x][new_y] == 4:
+            elif maze[new_x][new_y] <= 4:
                 self.is_in_fog = False
                 self.fog_entrance += 1
-                print("Teleport - blue")
+                print("Portal - blue")
                 if new_x == 13:
                     player_pos[0], player_pos[1] = 3, 9
                 else:
                     player_pos[0], player_pos[1] = 13, 15
             elif maze[new_x][new_y] == 7:
-                if self.fog_entrance < 2:
-                    if Fog_matrix[new_x - 11][new_y - 13] == 0:
-                        print("khali")
-
-                    elif Fog_matrix[new_x - 11][new_y - 13] == 1:
-                        print("divar")
-
-                    elif Fog_matrix[new_x - 11][new_y - 13] == 4:
-                        print("siah")
-
+                if self.fog_entrance == 0 or not self.is_in_fog:
                     self.is_in_fog = True
-                    player_pos[0], player_pos[1] = new_x, new_y
+                    self.fog_entrance += 1
+                    self.player_x_before_fog = player_pos[1]
+                    self.player_y_before_fog = player_pos[0]
+
+                if self.fog_entrance <= self.fog_entrance_capacity:
+                    self.score -= 10
+                    if Fog_matrix[new_x - 11][new_y - 13] == 0:
+                        self.fog_entrance += 1
+                        player_pos[0], player_pos[1] = new_x, new_y
+                    elif Fog_matrix[new_x - 11][new_y - 13] == 1:
+                        print("There is a wall here")
+                    elif Fog_matrix[new_x - 11][new_y - 13] == 4:
+                        player_pos[0], player_pos[1] = 3, 9
+                else:
+                    player_pos[0], player_pos[1] = self.player_y_before_fog, self.player_x_before_fog
+                    self.player_y_before_fog = 0
+                    self.player_x_before_fog = 0
+                    self.fog_entrance = 0
+                    self.is_in_fog = False
 
         print(self.score)
 
