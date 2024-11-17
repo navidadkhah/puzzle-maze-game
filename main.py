@@ -42,9 +42,15 @@ class Agent:
                 elif maze[row][col] == 2:
                     color = GRAY
                 elif maze[row][col] == 3:
-                    color = PURPLE
+                    center_x = col * cell_size + cell_size // 2
+                    center_y = row * cell_size + cell_size // 2
+                    pygame.draw.circle(screen, PURPLE, (center_x, center_y), cell_size // 3)
+                    continue  # Skip drawing the rectangle to leave the bomb visible
                 elif maze[row][col] == 4:
-                    color = BLUE
+                    center_x = col * cell_size + cell_size // 2
+                    center_y = row * cell_size + cell_size // 2
+                    pygame.draw.circle(screen, BLUE, (center_x, center_y), cell_size // 3)
+                    continue  # Skip drawing the rectangle to leave the bomb visible
                 elif maze[row][col] == 5:
                     color = YELLOW
                 elif maze[row][col] == 6:
@@ -62,7 +68,7 @@ class Agent:
         pygame.draw.circle(screen, GREEN, (center_x, center_y), cell_size // 2)
         # Draw entrance and exit
         screen.blit(arrow_image, (0 * cell_size, 11 * cell_size))
-        screen.blit(arrow_image, (21 * cell_size, 11 * cell_size))
+        screen.blit(arrow_image, (22 * cell_size, 11 * cell_size))
 
     def move_player(self, dx, dy):
         new_x = player_pos[0] + dx
