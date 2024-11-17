@@ -4,6 +4,7 @@
 # 2 represents puzzles
 # 3 represents teleports
 # 4 represents portals
+# 7 represents fog
 
 maze = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
