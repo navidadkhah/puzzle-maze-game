@@ -165,10 +165,12 @@ def main_battle_ship():
         if battle.alive_ship == 0:
             print("You have won")
             running = False
+            pygame.display.set_mode((23 * 20, 23 * 20))
             return 60, True
         if battle.fail:
             print("RIDIIII")
             running = False
+            pygame.display.set_mode((23 * 20, 23 * 20))
             return -10, False
 
     pygame.display.set_mode((23 * 20, 23 * 20))
