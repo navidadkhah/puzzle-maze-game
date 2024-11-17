@@ -20,7 +20,7 @@ class Battleship:
         self.alive_ship = 4
         self.bombs = 0
         self.moves = 0
-        self.moves_capacity = 20
+        self.moves_capacity = 40
         self.fail = False
         global screen, clock, alive_ship
         pygame.init()
