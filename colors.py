@@ -16,3 +16,5 @@ BLUE = (0, 0, 255)
 PURPLE = (128, 0, 128)
 # Puzzles
 GRAY = (105, 105, 105)
+# Fog
+LIGHT_BLUE = (204, 255, 255)
