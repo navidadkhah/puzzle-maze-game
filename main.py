@@ -5,6 +5,7 @@ from fog import Fog_matrix
 from fog_entrance_locations import NORTH_ENTRANCE, SOUTH_ENTRANCE, WEST_ENTRANCE, EAST_ENTRANCE
 from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE, LIGHT_BLUE
 from ImpossibleMaze4 import impossible_maze
+from battle_ship import main_battle_ship
 
 # Initialize Pygame
 pygame.init()
@@ -17,7 +18,7 @@ screen = pygame.display.set_mode((screen_size, screen_size))
 pygame.display.set_caption("9x9 Maze Game")
 
 # Player starting position
-player_pos = [10, 13]
+player_pos = [11, 1]
 
 arrow_image = pygame.image.load('Images/Arrow.jpg')  # Make sure to have an 'arrow.png' in your directory
 arrow_image = pygame.transform.scale(arrow_image, (cell_size, cell_size))  # Scale it to fit the cell
@@ -156,6 +157,18 @@ class Agent:
                 maze[dx][dy] = 0
                 return True
             return False
+        elif dx == 19 and dy == 6:
+            main_battle_ship()
+            # temp_score = self.score + score
+            # if temp_score > 2000:
+            #     self.bonus = self.score % 2000
+            #     self.score = 2000
+            # else:
+            #     self.score += score
+            # if is_done:
+            #     maze[dx][dy] = 0
+            #     return True
+            # return False
 
 
 # Game loop
