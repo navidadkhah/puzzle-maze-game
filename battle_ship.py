@@ -19,6 +19,8 @@ class Battleship:
     def __init__(self):
         self.alive_ship = 4
         self.bombs = 0
+        self.moves = 0
+        self.moves_capacity = 20
         self.fail = False
         global screen, clock, alive_ship
         pygame.init()
@@ -102,12 +104,7 @@ class Battleship:
 
             if self.check_free(grid, row, col, 1, "horizontal"):
                 self.place_ship(grid, row, col, 1, "horizontal", 5)
-                print(row)
-                print(col)
-                print("----")
                 placed += 1
-        print("added")
-
 
     def get_cell_pos(self, mouse_pos):
         x, y = mouse_pos
@@ -117,6 +114,7 @@ class Battleship:
 
     def handle_click(self, hit_matrix, ship_matrix, row, col):
         if ship_matrix[row][col] == 0:
+            self.moves += 1
             hit_matrix[row][col] = 'miss'
         elif ship_matrix[row][col] == 5:
             hit_matrix[row][col] = 'bomb'
@@ -144,12 +142,12 @@ class Battleship:
         self.alive_ship -= 1
 
 
-def main():
+def main_battle_ship():
     battle = Battleship()
     ship_matrix = battle.random_ships()
     hit_matrix = [['' for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
     running = True
-    while running:
+    while running and battle.moves < battle.moves_capacity:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -167,14 +165,14 @@ def main():
         if battle.alive_ship == 0:
             print("You have won")
             running = False
+            return 60, True
         if battle.fail:
             print("RIDIIII")
             running = False
+            return -10, False
 
+    pygame.display.set_mode((23 * 20, 23 * 20))
 
-    pygame.quit()
-    sys.exit()
+    print("Your moves are done")
+    return -10, False
 
-
-if __name__ == "__main__":
-    main()

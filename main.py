@@ -158,17 +158,17 @@ class Agent:
                 return True
             return False
         elif dx == 19 and dy == 6:
-            main_battle_ship()
-            # temp_score = self.score + score
-            # if temp_score > 2000:
-            #     self.bonus = self.score % 2000
-            #     self.score = 2000
-            # else:
-            #     self.score += score
-            # if is_done:
-            #     maze[dx][dy] = 0
-            #     return True
-            # return False
+            score, is_done = main_battle_ship()
+            temp_score = self.score + score
+            if temp_score > 2000:
+                self.bonus = self.score % 2000
+                self.score = 2000
+            else:
+                self.score += score
+            if is_done:
+                maze[dx][dy] = 0
+                return True
+            return False
 
 
 # Game loop
