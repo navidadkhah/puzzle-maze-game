@@ -1,8 +1,11 @@
 import pygame
 import sys
 from map import maze
-from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE
+from fog import Fog_matrix
+from fog_entrance_locations import NORTH_ENTRANCE, SOUTH_ENTRANCE, WEST_ENTRANCE, EAST_ENTRANCE
+from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE, LIGHT_BLUE
 from ImpossibleMaze4 import impossible_maze
+from battle_ship import main_battle_ship
 
 # Initialize Pygame
 pygame.init()
@@ -17,10 +20,19 @@ pygame.display.set_caption("9x9 Maze Game")
 # Player starting position
 player_pos = [11, 1]
 
+arrow_image = pygame.image.load('Images/Arrow.jpg')  # Make sure to have an 'arrow.png' in your directory
+arrow_image = pygame.transform.scale(arrow_image, (cell_size, cell_size))  # Scale it to fit the cell
+
+
 class Agent:
     def __init__(self, score):
         self.score = score
         self.bonus = 0
+        self.fog_entrance = 0
+        self.fog_entrance_capacity = 3
+        self.player_x_before_fog = 0
+        self.player_y_before_fog = 0
+        self.is_in_fog = False
 
     def draw_maze(self):
         for row in range(grid_size):
@@ -30,28 +42,55 @@ class Agent:
                 elif maze[row][col] == 2:
                     color = GRAY
                 elif maze[row][col] == 3:
-                    color = PURPLE
+                    center_x = col * cell_size + cell_size // 2
+                    center_y = row * cell_size + cell_size // 2
+                    pygame.draw.circle(screen, PURPLE, (center_x, center_y), cell_size // 3)
+                    continue  # Skip drawing the rectangle to leave the bomb visible
                 elif maze[row][col] == 4:
-                    color = BLUE
+                    center_x = col * cell_size + cell_size // 2
+                    center_y = row * cell_size + cell_size // 2
+                    pygame.draw.circle(screen, BLUE, (center_x, center_y), cell_size // 3)
+                    continue  # Skip drawing the rectangle to leave the bomb visible
                 elif maze[row][col] == 5:
                     color = YELLOW
                 elif maze[row][col] == 6:
                     color = RED
+                elif maze[row][col] == 7:
+                    color = LIGHT_BLUE
                 else:
                     color = BLACK
                 pygame.draw.rect(screen, color, (col * cell_size, row * cell_size, cell_size, cell_size))
 
     def draw_player(self):
-        pygame.draw.rect(screen, GREEN, (player_pos[1] * cell_size, player_pos[0] * cell_size, cell_size, cell_size))
+        # Draw player
+        center_x = player_pos[1] * cell_size + cell_size // 2
+        center_y = player_pos[0] * cell_size + cell_size // 2
+        pygame.draw.circle(screen, GREEN, (center_x, center_y), cell_size // 2)
+        # Draw entrance and exit
+        screen.blit(arrow_image, (0 * cell_size, 11 * cell_size))
+        screen.blit(arrow_image, (22 * cell_size, 11 * cell_size))
 
     def move_player(self, dx, dy):
         new_x = player_pos[0] + dx
         new_y = player_pos[1] + dy
         if 0 <= new_x < grid_size and 0 <= new_y < grid_size:
+
+            if maze[new_x][new_y] != 1 \
+                and (new_x - 11 < 0 or new_x - 11 > 2 or new_y - 13 < 0 or new_y - 13 > 2):
+                self.is_in_fog = False
+                self.player_y_before_fog = 0
+                self.player_x_before_fog = 0
+                self.fog_entrance = 0
+
             if maze[new_x][new_y] == 0 or maze[new_x][new_y] == 5:
                 self.score -= 10
                 player_pos[0], player_pos[1] = new_x, new_y
-                matrix_entrance[new_x][new_y] += 1
+                if not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
+                    or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
+                    or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
+                    or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]):
+                    matrix_entrance[new_x][new_y] += 1
+
                 current_entrance = matrix_entrance[new_x][new_y]
                 if current_entrance == 2:
                     maze[new_x][new_y] = 5
@@ -59,11 +98,12 @@ class Agent:
                 if current_entrance == 3:
                     maze[new_x][new_y] = 6
                     self.score -= 30
+
             elif maze[new_x][new_y] == 2:
                 print("Bia bazi")
                 state = self.open_new_window(new_x, new_y)
                 if state:
-                   player_pos[0], player_pos[1] = new_x, new_y
+                    player_pos[0], player_pos[1] = new_x, new_y
             elif maze[new_x][new_y] == 3:
                 print("Teleport - yellow")
                 if new_x == 1:
@@ -71,27 +111,76 @@ class Agent:
                 else:
                     player_pos[0], player_pos[1] = 1, 15
             elif maze[new_x][new_y] == 4:
-                print("Teleport - blue")
+                print("Portal - blue")
                 if new_x == 13:
                     player_pos[0], player_pos[1] = 3, 9
                 else:
                     player_pos[0], player_pos[1] = 13, 15
+            elif maze[new_x][new_y] == 7:
+                if self.fog_entrance == 0 or not self.is_in_fog:
+                    self.is_in_fog = True
+                    self.fog_entrance += 1
+                    self.player_x_before_fog = player_pos[1]
+                    self.player_y_before_fog = player_pos[0]
+
+                if self.fog_entrance <= self.fog_entrance_capacity:
+                    self.score -= 10
+                    if Fog_matrix[new_x - 11][new_y - 13] == 0:
+                        self.fog_entrance += 1
+                        player_pos[0], player_pos[1] = new_x, new_y
+                    elif Fog_matrix[new_x - 11][new_y - 13] == 1:
+                        print("There is a wall here")
+                    elif Fog_matrix[new_x - 11][new_y - 13] == 4:
+                        player_pos[0], player_pos[1] = 3, 9
+                else:
+                    player_pos[0], player_pos[1] = self.player_y_before_fog, self.player_x_before_fog
+                    self.player_y_before_fog = 0
+                    self.player_x_before_fog = 0
+                    self.fog_entrance = 0
+                    self.is_in_fog = False
+
         print(self.score)
+
+    def is_traped(self):
+        if (maze[player_pos[0] + 1][player_pos[1]] == 1 or maze[player_pos[0] + 1][player_pos[1]] == 6) \
+                and (maze[player_pos[0] - 1][player_pos[1]] == 1 or maze[player_pos[0] - 1][player_pos[1]] == 6) \
+                and (maze[player_pos[0]][player_pos[1] + 1] == 1 or maze[player_pos[0]][player_pos[1] + 1] == 6) \
+                and (maze[player_pos[0]][player_pos[1] - 1] == 1 or maze[player_pos[0]][player_pos[1] - 1] == 6):
+            return True
+        else:
+            return False
 
     def open_new_window(self, dx, dy):
         if dx == 8 and dy == 5:
             score, is_done = impossible_maze()
-            self.score += score
+            temp_score = self.score + score
+            if temp_score > 2000:
+                self.bonus = self.score % 2000
+                self.score = 2000
+            else:
+                self.score += score
+            if is_done:
+                maze[dx][dy] = 0
+                return True
+            return False
+        elif dx == 19 and dy == 6:
+            score, is_done = main_battle_ship()
+            temp_score = self.score + score
+            if temp_score > 2000:
+                self.bonus = self.score % 2000
+                self.score = 2000
+            else:
+                self.score += score
             if is_done:
                 maze[dx][dy] = 0
                 return True
             return False
 
 
-
 # Game loop
 running = True
 matrix_entrance = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
+
 score = 2000
 agent = Agent(score)
 
@@ -117,6 +206,7 @@ while running:
 
     if player_pos == [11, 21]:
         running = False
+        score = agent.score + 2000
         if agent.bonus > 0:
             score = agent.score + agent.bonus
         score = min(4000, agent.score + agent.bonus)
@@ -130,9 +220,12 @@ while running:
         elif score > 0 and score < 3400:
             level = "C"
 
-
         print("You successfully completed the maze!!!")
         print(f"Your rank is {level}")
+
+    if agent.is_traped():
+        running = False
+        print("You are a loser")
 
 pygame.quit()
 sys.exit()
