@@ -6,7 +6,8 @@ from fog_entrance_locations import NORTH_ENTRANCE, SOUTH_ENTRANCE, WEST_ENTRANCE
 from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE, LIGHT_BLUE
 from ImpossibleMaze4 import impossible_maze
 from battle_ship import main_battle_ship
-
+from quizPuzzle import text_puzzle_question
+from quizWithHint import quiz_game_with_hint
 # Initialize Pygame
 pygame.init()
 # Set up display
@@ -20,8 +21,10 @@ pygame.display.set_caption("9x9 Maze Game")
 # Player starting position
 player_pos = [11, 1]
 
-arrow_image = pygame.image.load('Images/Arrow.jpg')  # Make sure to have an 'arrow.png' in your directory
-arrow_image = pygame.transform.scale(arrow_image, (cell_size, cell_size))  # Scale it to fit the cell
+# Make sure to have an 'arrow.png' in your directory
+arrow_image = pygame.image.load('Images/Arrow.jpg')
+arrow_image = pygame.transform.scale(
+    arrow_image, (cell_size, cell_size))  # Scale it to fit the cell
 
 
 class Agent:
@@ -44,12 +47,14 @@ class Agent:
                 elif maze[row][col] == 3:
                     center_x = col * cell_size + cell_size // 2
                     center_y = row * cell_size + cell_size // 2
-                    pygame.draw.circle(screen, PURPLE, (center_x, center_y), cell_size // 3)
+                    pygame.draw.circle(
+                        screen, PURPLE, (center_x, center_y), cell_size // 3)
                     continue  # Skip drawing the rectangle to leave the bomb visible
                 elif maze[row][col] == 4:
                     center_x = col * cell_size + cell_size // 2
                     center_y = row * cell_size + cell_size // 2
-                    pygame.draw.circle(screen, BLUE, (center_x, center_y), cell_size // 3)
+                    pygame.draw.circle(
+                        screen, BLUE, (center_x, center_y), cell_size // 3)
                     continue  # Skip drawing the rectangle to leave the bomb visible
                 elif maze[row][col] == 5:
                     color = YELLOW
@@ -59,7 +64,8 @@ class Agent:
                     color = LIGHT_BLUE
                 else:
                     color = BLACK
-                pygame.draw.rect(screen, color, (col * cell_size, row * cell_size, cell_size, cell_size))
+                pygame.draw.rect(
+                    screen, color, (col * cell_size, row * cell_size, cell_size, cell_size))
 
     def draw_player(self):
         # Draw player
@@ -76,7 +82,7 @@ class Agent:
         if 0 <= new_x < grid_size and 0 <= new_y < grid_size:
 
             if maze[new_x][new_y] != 1 \
-                and (new_x - 11 < 0 or new_x - 11 > 2 or new_y - 13 < 0 or new_y - 13 > 2):
+                    and (new_x - 11 < 0 or new_x - 11 > 2 or new_y - 13 < 0 or new_y - 13 > 2):
                 self.is_in_fog = False
                 self.player_y_before_fog = 0
                 self.player_x_before_fog = 0
@@ -86,9 +92,9 @@ class Agent:
                 self.score -= 10
                 player_pos[0], player_pos[1] = new_x, new_y
                 if not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
-                    or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
-                    or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
-                    or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]):
+                        or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
+                        or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
+                        or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]):
                     matrix_entrance[new_x][new_y] += 1
 
                 current_entrance = matrix_entrance[new_x][new_y]
@@ -163,6 +169,7 @@ class Agent:
                 maze[dx][dy] = 0
                 return True
             return False
+
         elif dx == 19 and dy == 6:
             score, is_done = main_battle_ship()
             temp_score = self.score + score
@@ -175,6 +182,59 @@ class Agent:
                 maze[dx][dy] = 0
                 return True
             return False
+
+        elif dx == 4 and dy == 9:
+            question = "آن چیست که هرچه از آن کم کنی بیشتر میشود؟"
+            answer = text_puzzle_question(screen, question)
+            if answer == "نمیدونم":
+                maze[dx][dy] = 0
+                return True
+            else:
+                print("Incorrect answer. Try again!")
+                return False
+
+        elif dx == 18 and dy == 7:
+            question = "معادله رو با حرکت یک چوب کبریت حل کن"
+            answer = text_puzzle_question(
+                screen, question, "./Images/kebrit.png")
+            if answer == "142-3=139":
+                maze[dx][dy] = 0
+                return True
+            else:
+                print("Incorrect answer. Try again!")
+                return False
+
+        elif dx == 13 and dy == 10:
+            question = "خاور <- دبهز, بیمار <- ثپهتس, تاس <- جپص, داور <- ؟"
+            hints = ["راهنمایی ۱: تست", "راهنمایی ۲: تست 2"]
+            answer = quiz_game_with_hint(screen, question, "داور", hints)
+            if answer == "داور":
+                maze[dx][dy] = 0
+                return True
+            else:
+                print("Incorrect answer. Try again!")
+                return False
+
+        elif dx == 10 and dy == 9:
+            question = "چهار مرد در یک صف ایستاده اند و بین مرد چهارم و سایر مردها، یک دیوار کشیده شده است. این مردان توانایی صحبت کردن با یکدیگر یا برگرداندن سرشان را ندارند و هرکسی فقط مرد یا مردان جلوی خود را میبیند. دیوار کشیده شده باعث میشود که مرد چهارم توسط هیچ کسی دیده نشود. همه مردان می دانند دو کلاه سفید و دو کلاه سیاه در بازی وجود دارد. کدام مرد زودتر میتواند رنگ کلاهش را حدس بزند؟"
+            answer = text_puzzle_question(
+                screen, question, "./Images/hat.png")
+            if answer == "2":
+                maze[dx][dy] = 0
+                return True
+            else:
+                print("Incorrect answer. Try again!")
+                return False
+
+        elif dx == 8 and dy == 15:
+            question = "سه نفر در جزیره ی آدم خوارانِ منطقی گیر افتادند! آدم خواران اعلام کردند که یک فرصت برای نجات جان خود دارند، اما این تنها فرصت آن هاست. پنج کلاه مشابه که سه تای آنها سفید و دوتای آنها سیاه هستند بر روی میزی در برابر زندانیان قرار داشت. آدم خواران چشمان زندانیان را باز کردند. هر زندانی تنها کلاه افراد روبه روی خود را دید و نمی توانست کلاه خودش را ببیند. آدم خواران گفتند که اگر کسی رنگ کلاه خودش را به درستی اعلام کند، هر سه نفر نجات پیدا کرده و خورده نخواهند شد! آن ها از نفر آخر شروع به پرسیدن کردند. نفر آخر گفت: نمی دانم. و به سمت دیگ آب جوشحرکت کرد. نفر دوم هم گفت نمی دانم. و با غم به سمت دیگ راه افتاد. در این لحظه نفر سوم ناگهان فریاد زد: صبر کنید. من رنگ کلاه خودم را می دانم! کلاه او چه رنگی است؟"
+            answer = text_puzzle_question(screen, question)
+            if answer == "سفید":
+                maze[dx][dy] = 0
+                return True
+            else:
+                maze[dx][dy] = 1
+                return False
 
 
 # Game loop
