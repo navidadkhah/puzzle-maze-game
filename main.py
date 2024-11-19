@@ -238,6 +238,12 @@ class Agent:
                 return False
 
 
+def display_score(score):
+    font = pygame.font.Font(None, 24)  # Use a default font with size 36
+    text = font.render(f"Score: {score}", True, WHITE)  # Create a text surface
+    screen.blit(text, (screen_size - 100, 10))  # Draw the text at the top-right
+
+
 # Game loop
 running = True
 matrix_entrance = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
@@ -263,6 +269,7 @@ while running:
     screen.fill(WHITE)
     agent.draw_maze()
     agent.draw_player()
+    display_score(agent.score)
     pygame.display.flip()
 
     if player_pos == [11, 21]:
