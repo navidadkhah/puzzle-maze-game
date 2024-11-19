@@ -92,9 +92,9 @@ class Agent:
                 self.score -= 10
                 player_pos[0], player_pos[1] = new_x, new_y
                 if not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
-                        or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
-                        or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
-                        or not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]):
+                        and not (player_pos[0] == SOUTH_ENTRANCE[0] and player_pos[1] == SOUTH_ENTRANCE[1]) \
+                        and not (player_pos[0] == EAST_ENTRANCE[0] and player_pos[1] == EAST_ENTRANCE[1]) \
+                        and not (player_pos[0] == WEST_ENTRANCE[0] and player_pos[1] == WEST_ENTRANCE[1]):
                     matrix_entrance[new_x][new_y] += 1
 
                 current_entrance = matrix_entrance[new_x][new_y]
@@ -219,6 +219,7 @@ class Agent:
             question = "چهار مرد در یک صف ایستاده اند و بین مرد چهارم و سایر مردها، یک دیوار کشیده شده است. این مردان توانایی صحبت کردن با یکدیگر یا برگرداندن سرشان را ندارند و هرکسی فقط مرد یا مردان جلوی خود را میبیند. دیوار کشیده شده باعث میشود که مرد چهارم توسط هیچ کسی دیده نشود. همه مردان می دانند دو کلاه سفید و دو کلاه سیاه در بازی وجود دارد. کدام مرد زودتر میتواند رنگ کلاهش را حدس بزند؟"
             answer = text_puzzle_question(
                 screen, question, "./Images/hat.png")
+
             if answer == "2":
                 maze[dx][dy] = 0
                 return True
@@ -233,7 +234,7 @@ class Agent:
                 maze[dx][dy] = 0
                 return True
             else:
-                maze[dx][dy] = 1
+                print("Incorrect answer. Try again!")
                 return False
 
 
