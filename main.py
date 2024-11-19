@@ -145,8 +145,6 @@ class Agent:
                     self.fog_entrance = 0
                     self.is_in_fog = False
 
-        print(self.score)
-
     def is_traped(self):
         if (maze[player_pos[0] + 1][player_pos[1]] == 1 or maze[player_pos[0] + 1][player_pos[1]] == 6) \
                 and (maze[player_pos[0] - 1][player_pos[1]] == 1 or maze[player_pos[0] - 1][player_pos[1]] == 6) \
