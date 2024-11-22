@@ -8,6 +8,10 @@ from ImpossibleMaze4 import impossible_maze
 from battle_ship import main_battle_ship
 from quizPuzzle import text_puzzle_question
 from quizWithHint import quiz_game_with_hint
+import copy
+
+# maze
+# game_maze = copy.deepcopy(maze)
 
 # Initialize Pygame
 pygame.init()
@@ -37,31 +41,32 @@ class Agent:
         self.player_x_before_fog = 0
         self.player_y_before_fog = 0
         self.is_in_fog = False
+        self.game_maze = copy.deepcopy(maze)
 
     def draw_maze(self):
         for row in range(grid_size):
             for col in range(grid_size):
-                if maze[row][col] == 0:
+                if self.game_maze[row][col] == 0:
                     color = WHITE
-                elif maze[row][col] == 2:
+                elif self.game_maze[row][col] == 2:
                     color = GRAY
-                elif maze[row][col] == 3:
+                elif self.game_maze[row][col] == 3:
                     center_x = col * cell_size + cell_size // 2
                     center_y = row * cell_size + cell_size // 2
                     pygame.draw.circle(
                         screen, PURPLE, (center_x, center_y), cell_size // 3)
                     continue  # Skip drawing the rectangle to leave the bomb visible
-                elif maze[row][col] == 4:
+                elif self.game_maze[row][col] == 4:
                     center_x = col * cell_size + cell_size // 2
                     center_y = row * cell_size + cell_size // 2
                     pygame.draw.circle(
                         screen, BLUE, (center_x, center_y), cell_size // 3)
                     continue  # Skip drawing the rectangle to leave the bomb visible
-                elif maze[row][col] == 5:
+                elif self.game_maze[row][col] == 5:
                     color = YELLOW
-                elif maze[row][col] == 6:
+                elif self.game_maze[row][col] == 6:
                     color = RED
-                elif maze[row][col] == 7:
+                elif self.game_maze[row][col] == 7:
                     color = LIGHT_BLUE
                 else:
                     color = BLACK
@@ -82,14 +87,14 @@ class Agent:
         new_y = player_pos[1] + dy
         if 0 <= new_x < grid_size and 0 <= new_y < grid_size:
 
-            if maze[new_x][new_y] != 1 \
+            if self.game_maze[new_x][new_y] != 1 \
                     and (new_x - 11 < 0 or new_x - 11 > 2 or new_y - 13 < 0 or new_y - 13 > 2):
                 self.is_in_fog = False
                 self.player_y_before_fog = 0
                 self.player_x_before_fog = 0
                 self.fog_entrance = 0
 
-            if maze[new_x][new_y] == 0 or maze[new_x][new_y] == 5:
+            if self.game_maze[new_x][new_y] == 0 or self.game_maze[new_x][new_y] == 5:
                 self.score -= 10
                 player_pos[0], player_pos[1] = new_x, new_y
                 if not (player_pos[0] == NORTH_ENTRANCE[0] and player_pos[1] == NORTH_ENTRANCE[1]) \
@@ -100,30 +105,30 @@ class Agent:
 
                 current_entrance = matrix_entrance[new_x][new_y]
                 if current_entrance == 2:
-                    maze[new_x][new_y] = 5
+                    self.game_maze[new_x][new_y] = 5
                     self.score -= 10
                 if current_entrance == 3:
-                    maze[new_x][new_y] = 6
+                    self.game_maze[new_x][new_y] = 6
                     self.score -= 30
 
-            elif maze[new_x][new_y] == 2:
+            elif self.game_maze[new_x][new_y] == 2:
                 print("Bia bazi")
                 state = self.open_new_window(new_x, new_y)
                 if state:
                     player_pos[0], player_pos[1] = new_x, new_y
-            elif maze[new_x][new_y] == 3:
+            elif self.game_maze[new_x][new_y] == 3:
                 print("Teleport - yellow")
                 if new_x == 1:
                     player_pos[0], player_pos[1] = 21, 5
                 else:
                     player_pos[0], player_pos[1] = 1, 15
-            elif maze[new_x][new_y] == 4:
+            elif self.game_maze[new_x][new_y] == 4:
                 print("Portal - blue")
                 if new_x == 13:
                     player_pos[0], player_pos[1] = 3, 9
                 else:
                     player_pos[0], player_pos[1] = 13, 15
-            elif maze[new_x][new_y] == 7:
+            elif self.game_maze[new_x][new_y] == 7:
                 if self.fog_entrance == 0 or not self.is_in_fog:
                     self.is_in_fog = True
                     self.fog_entrance += 1
@@ -147,10 +152,10 @@ class Agent:
                     self.is_in_fog = False
 
     def is_traped(self):
-        if (maze[player_pos[0] + 1][player_pos[1]] == 1 or maze[player_pos[0] + 1][player_pos[1]] == 6) \
-                and (maze[player_pos[0] - 1][player_pos[1]] == 1 or maze[player_pos[0] - 1][player_pos[1]] == 6) \
-                and (maze[player_pos[0]][player_pos[1] + 1] == 1 or maze[player_pos[0]][player_pos[1] + 1] == 6) \
-                and (maze[player_pos[0]][player_pos[1] - 1] == 1 or maze[player_pos[0]][player_pos[1] - 1] == 6):
+        if (self.game_maze[player_pos[0] + 1][player_pos[1]] == 1 or self.game_maze[player_pos[0] + 1][player_pos[1]] == 6) \
+                and (self.game_maze[player_pos[0] - 1][player_pos[1]] == 1 or self.game_maze[player_pos[0] - 1][player_pos[1]] == 6) \
+                and (self.game_maze[player_pos[0]][player_pos[1] + 1] == 1 or self.game_maze[player_pos[0]][player_pos[1] + 1] == 6) \
+                and (self.game_maze[player_pos[0]][player_pos[1] - 1] == 1 or self.game_maze[player_pos[0]][player_pos[1] - 1] == 6):
             return True
         else:
             return False
@@ -165,7 +170,7 @@ class Agent:
             else:
                 self.score += score
             if is_done:
-                maze[dx][dy] = 0
+                self.game_maze[dx][dy] = 0
                 return True
             return False
 
@@ -178,7 +183,7 @@ class Agent:
             else:
                 self.score += score
             if is_done:
-                maze[dx][dy] = 0
+                self.game_maze[dx][dy] = 0
                 return True
             return False
 
@@ -186,7 +191,7 @@ class Agent:
             question = "آن چیست که هرچه از آن کم کنی بیشتر میشود؟"
             answer = text_puzzle_question(screen, question)
             if answer == "نمیدونم":
-                maze[dx][dy] = 0
+                self.game_maze[dx][dy] = 0
                 return True
             else:
                 print("Incorrect answer. Try again!")
@@ -197,7 +202,7 @@ class Agent:
             answer = text_puzzle_question(
                 screen, question, "./Images/kebrit.png")
             if answer == "142-3=139":
-                maze[dx][dy] = 0
+                self.game_maze[dx][dy] = 0
                 return True
             else:
                 print("Incorrect answer. Try again!")
@@ -208,7 +213,7 @@ class Agent:
             hints = ["راهنمایی ۱: تست", "راهنمایی ۲: تست 2"]
             answer = quiz_game_with_hint(screen, question, "داور", hints)
             if answer == "داور":
-                maze[dx][dy] = 0
+                self.game_maze[dx][dy] = 0
                 return True
             else:
                 print("Incorrect answer. Try again!")
@@ -220,7 +225,7 @@ class Agent:
                 screen, question, "./Images/hat.png")
 
             if answer == "2":
-                maze[dx][dy] = 0
+                self.game_maze[dx][dy] = 0
                 return True
             else:
                 print("Incorrect answer. Try again!")
@@ -230,7 +235,7 @@ class Agent:
             question = "سه نفر در جزیره ی آدم خوارانِ منطقی گیر افتادند! آدم خواران اعلام کردند که یک فرصت برای نجات جان خود دارند، اما این تنها فرصت آن هاست. پنج کلاه مشابه که سه تای آنها سفید و دوتای آنها سیاه هستند بر روی میزی در برابر زندانیان قرار داشت. آدم خواران چشمان زندانیان را باز کردند. هر زندانی تنها کلاه افراد روبه روی خود را دید و نمی توانست کلاه خودش را ببیند. آدم خواران گفتند که اگر کسی رنگ کلاه خودش را به درستی اعلام کند، هر سه نفر نجات پیدا کرده و خورده نخواهند شد! آن ها از نفر آخر شروع به پرسیدن کردند. نفر آخر گفت: نمی دانم. و به سمت دیگ آب جوشحرکت کرد. نفر دوم هم گفت نمی دانم. و با غم به سمت دیگ راه افتاد. در این لحظه نفر سوم ناگهان فریاد زد: صبر کنید. من رنگ کلاه خودم را می دانم! کلاه او چه رنگی است؟"
             answer = text_puzzle_question(screen, question)
             if answer == "سفید":
-                maze[dx][dy] = 0
+                self.game_maze[dx][dy] = 0
                 return True
             else:
                 print("Incorrect answer. Try again!")
@@ -288,12 +293,16 @@ def play_game():
             elif 0 < score < 3400:
                 level = "C"
 
-            print("You successfully completed the maze!!!")
+            note = "You successfully completed the maze!!!"
             print(f"Your rank is {level}")
+
+            return note, level, score
 
         if agent.is_traped():
             running = False
-            print("You are a loser")
+            note = "You are trapped"
+            level = "C"
+            return note, level, agent.score
 
     pygame.quit()
     sys.exit()
