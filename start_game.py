@@ -1,5 +1,7 @@
 import subprocess
 import sys
+from mainMenu import main_menu
+
 
 def install_packages():
     """Install required packages using pip."""
@@ -12,14 +14,8 @@ def install_packages():
             print(f"Failed to install {package}. Please install it manually.")
             sys.exit(1)
 
-def run_main():
-    """Run the main.py file."""
-    try:
-        subprocess.run([sys.executable, "main.py"], check=True)
-    except FileNotFoundError:
-        print("main.py not found. Ensure it is in the same directory.")
-        sys.exit(1)
 
 if __name__ == "__main__":
     install_packages()
-    run_main()
+    main_menu()
+

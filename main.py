@@ -8,6 +8,7 @@ from ImpossibleMaze4 import impossible_maze
 from battle_ship import main_battle_ship
 from quizPuzzle import text_puzzle_question
 from quizWithHint import quiz_game_with_hint
+
 # Initialize Pygame
 pygame.init()
 # Set up display
@@ -76,7 +77,7 @@ class Agent:
         screen.blit(arrow_image, (0 * cell_size, 11 * cell_size))
         screen.blit(arrow_image, (22 * cell_size, 11 * cell_size))
 
-    def move_player(self, dx, dy):
+    def move_player(self, dx, dy, matrix_entrance):
         new_x = player_pos[0] + dx
         new_y = player_pos[1] + dy
         if 0 <= new_x < grid_size and 0 <= new_y < grid_size:
@@ -242,56 +243,57 @@ def display_score(score):
     screen.blit(text, (screen_size - 100, 10))  # Draw the text at the top-right
 
 
-# Game loop
-running = True
-matrix_entrance = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
+def play_game():
+    running = True
+    matrix_entrance = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
 
-score = 2000
-agent = Agent(score)
+    score = 2000
+    agent = Agent(score)
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    agent.move_player(-1, 0, matrix_entrance)
+                elif event.key == pygame.K_DOWN:
+                    agent.move_player(1, 0, matrix_entrance)
+                elif event.key == pygame.K_LEFT:
+                    agent.move_player(0, -1, matrix_entrance)
+                elif event.key == pygame.K_RIGHT:
+                    agent.move_player(0, 1, matrix_entrance)
+
+        # Draw maze and player
+        screen.fill(WHITE)
+        agent.draw_maze()
+        agent.draw_player()
+        display_score(agent.score)
+        pygame.display.flip()
+
+        if player_pos == [11, 21]:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                agent.move_player(-1, 0)
-            elif event.key == pygame.K_DOWN:
-                agent.move_player(1, 0)
-            elif event.key == pygame.K_LEFT:
-                agent.move_player(0, -1)
-            elif event.key == pygame.K_RIGHT:
-                agent.move_player(0, 1)
+            score = agent.score + 2000
+            if agent.bonus > 0:
+                score = agent.score + agent.bonus
+            score = min(4000, agent.score + agent.bonus)
 
-    # Draw maze and player
-    screen.fill(WHITE)
-    agent.draw_maze()
-    agent.draw_player()
-    display_score(agent.score)
-    pygame.display.flip()
+            level = ""
+            if 3750 < score < 4000:
+                level = "S"
+            elif 3650 < score < 3749:
+                level = "A"
+            elif 3400 < score < 3649:
+                level = "B"
+            elif 0 < score < 3400:
+                level = "C"
 
-    if player_pos == [11, 21]:
-        running = False
-        score = agent.score + 2000
-        if agent.bonus > 0:
-            score = agent.score + agent.bonus
-        score = min(4000, agent.score + agent.bonus)
+            print("You successfully completed the maze!!!")
+            print(f"Your rank is {level}")
 
-        if score > 3750 and score < 4000:
-            level = "S"
-        elif score > 3650 and score < 3749:
-            level = "A"
-        elif score > 3400 and score < 3649:
-            level = "B"
-        elif score > 0 and score < 3400:
-            level = "C"
+        if agent.is_traped():
+            running = False
+            print("You are a loser")
 
-        print("You successfully completed the maze!!!")
-        print(f"Your rank is {level}")
-
-    if agent.is_traped():
-        running = False
-        print("You are a loser")
-
-pygame.quit()
-sys.exit()
+    pygame.quit()
+    sys.exit()
