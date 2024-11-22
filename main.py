@@ -10,9 +10,6 @@ from quizPuzzle import text_puzzle_question
 from quizWithHint import quiz_game_with_hint
 import copy
 
-# maze
-# game_maze = copy.deepcopy(maze)
-
 # Initialize Pygame
 pygame.init()
 # Set up display
