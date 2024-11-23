@@ -1,6 +1,6 @@
 import pygame
 import sys
-from colors import WHITE, BLACK, GREEN, RED
+from colors import WHITE, BLACK, GREEN, RED, LIGHT_BLUE
 from main import play_game
 
 pygame.init()
@@ -81,5 +81,50 @@ def main_menu():
 
 
 def show_instructions():
-    # Placeholder for the instructions display
-    print("Instructions")
+    # Create a new Pygame window for instructions
+    instructions_running = True
+    instructions_screen = pygame.display.set_mode((screen_size, screen_size))
+    pygame.display.set_caption("Instructions")
+
+    # Define the font and text for the instructions
+    font = pygame.font.Font(None, 20)
+    title_font = pygame.font.Font(None, 36)
+    title_text = title_font.render("Game Instructions", True, BLACK)
+    instructions_text = [
+        "1. Navigate through the maze to reach the goal.",
+        "2. Use arrow keys to move your character.",
+        "3. Each gray obstacles has a game, win them to open your way.",
+        "4. You have limited lives, so play carefully.",
+        "5. Completing the puzzle gives a bonus score.",
+        "6. Some portals and teleports are in the game, use them.",
+    ]
+
+    # Main loop for the instructions screen
+    while instructions_running:
+        instructions_screen.fill(LIGHT_BLUE)
+
+        # Draw the title
+        title_rect = title_text.get_rect(center=(screen_size // 2, 50))
+        instructions_screen.blit(title_text, title_rect)
+
+        # Draw the instructions text
+        for i, line in enumerate(instructions_text):
+            line_surface = font.render(line, True, BLACK)
+            line_rect = line_surface.get_rect(topleft=(50, 100 + i * 30))
+            instructions_screen.blit(line_surface, line_rect)
+
+        # Draw the Back button
+        draw_button(instructions_screen, "Back", screen_size // 4, screen_size - 100, screen_size // 2, 50, RED, BLACK)
+
+        pygame.display.flip()
+
+        # Handle events
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                if screen_size // 4 <= mouse_x <= screen_size * 3 // 4 and screen_size - 100 <= mouse_y <= screen_size - 50:
+                    instructions_running = False  # Exit the instructions screen
+
