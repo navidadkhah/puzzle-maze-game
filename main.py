@@ -188,9 +188,16 @@ class Agent:
             question = "آن چیست که هرچه از آن کم کنی بیشتر میشود؟"
             answer = text_puzzle_question(screen, question)
             if answer == "نمیدونم":
-                self.game_maze[dx][dy] = 0
-                return True
+                temp_score = self.score + 60
+                if temp_score > 2000:
+                    self.bonus = self.score % 2000
+                    self.score = 2000
+                else:
+                    self.score += 60
+                    self.game_maze[dx][dy] = 0
+                    return True
             else:
+                self.score -= 10
                 print("Incorrect answer. Try again!")
                 return False
 
@@ -199,9 +206,16 @@ class Agent:
             answer = text_puzzle_question(
                 screen, question, "./Images/kebrit.png")
             if answer == "142-3=139":
+                temp_score = self.score + 60
+                if temp_score > 2000:
+                    self.bonus = self.score % 2000
+                    self.score = 2000
+                else:
+                    self.score += 60
                 self.game_maze[dx][dy] = 0
                 return True
             else:
+                self.score -= 10
                 print("Incorrect answer. Try again!")
                 return False
 
@@ -210,9 +224,16 @@ class Agent:
             hints = ["راهنمایی ۱: تست", "راهنمایی ۲: تست 2"]
             answer = quiz_game_with_hint(screen, question, "داور", hints)
             if answer == "داور":
+                temp_score = self.score + 60
+                if temp_score > 2000:
+                    self.bonus = self.score % 2000
+                    self.score = 2000
+                else:
+                    self.score += 60
                 self.game_maze[dx][dy] = 0
                 return True
             else:
+                self.score -= 10
                 print("Incorrect answer. Try again!")
                 return False
 
@@ -222,9 +243,16 @@ class Agent:
                 screen, question, "./Images/hat.png")
 
             if answer == "2":
+                temp_score = self.score + 60
+                if temp_score > 2000:
+                    self.bonus = self.score % 2000
+                    self.score = 2000
+                else:
+                    self.score += 60
                 self.game_maze[dx][dy] = 0
                 return True
             else:
+                self.score -= 10
                 print("Incorrect answer. Try again!")
                 return False
 
@@ -232,9 +260,16 @@ class Agent:
             question = "سه نفر در جزیره ی آدم خوارانِ منطقی گیر افتادند! آدم خواران اعلام کردند که یک فرصت برای نجات جان خود دارند، اما این تنها فرصت آن هاست. پنج کلاه مشابه که سه تای آنها سفید و دوتای آنها سیاه هستند بر روی میزی در برابر زندانیان قرار داشت. آدم خواران چشمان زندانیان را باز کردند. هر زندانی تنها کلاه افراد روبه روی خود را دید و نمی توانست کلاه خودش را ببیند. آدم خواران گفتند که اگر کسی رنگ کلاه خودش را به درستی اعلام کند، هر سه نفر نجات پیدا کرده و خورده نخواهند شد! آن ها از نفر آخر شروع به پرسیدن کردند. نفر آخر گفت: نمی دانم. و به سمت دیگ آب جوشحرکت کرد. نفر دوم هم گفت نمی دانم. و با غم به سمت دیگ راه افتاد. در این لحظه نفر سوم ناگهان فریاد زد: صبر کنید. من رنگ کلاه خودم را می دانم! کلاه او چه رنگی است؟"
             answer = text_puzzle_question(screen, question)
             if answer == "سفید":
+                temp_score = self.score + 60
+                if temp_score > 2000:
+                    self.bonus = self.score % 2000
+                    self.score = 2000
+                else:
+                    self.score += 60
                 self.game_maze[dx][dy] = 0
                 return True
             else:
+                self.score -= 10
                 print("Incorrect answer. Try again!")
                 return False
 
@@ -274,11 +309,11 @@ def play_game():
         pygame.display.flip()
 
         if player_pos == [11, 21]:
-            running = False
-            score = agent.score + 2000
+            agent.score += 2000
             if agent.bonus > 0:
-                score = agent.score + agent.bonus
-            score = min(4000, agent.score + agent.bonus)
+                agent.score += agent.bonus
+            score = min(4000, agent.score)
+            print(score)
 
             level = ""
             if 3750 < score < 4000:
@@ -296,7 +331,6 @@ def play_game():
             return note, level, score
 
         if agent.is_traped():
-            running = False
             note = "You are trapped"
             level = "C"
             return note, level, agent.score
