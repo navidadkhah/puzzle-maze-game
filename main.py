@@ -29,6 +29,19 @@ arrow_image = pygame.image.load('Images/Arrow.jpg')
 arrow_image = pygame.transform.scale(
     arrow_image, (cell_size, cell_size))  # Scale it to fit the cell
 
+portal_image = pygame.image.load('Images/portal.png')
+portal_image = pygame.transform.scale(
+    portal_image, (cell_size, cell_size))  # Scale it to fit the cell
+
+top_teleport_image = pygame.image.load('Images/top_teleport.jpg')
+top_teleport_image = pygame.transform.scale(
+    top_teleport_image, (cell_size, cell_size))  # Scale it to fit the cell
+
+down_teleport_image = pygame.image.load('Images/down_teleport.jpg')
+down_teleport_image = pygame.transform.scale(
+    down_teleport_image, (cell_size, cell_size))  # Scale it to fit the cell
+
+
 
 class Agent:
     def __init__(self, score):
@@ -79,6 +92,12 @@ class Agent:
         # Draw entrance and exit
         screen.blit(arrow_image, (0 * cell_size, 11 * cell_size))
         screen.blit(arrow_image, (22 * cell_size, 11 * cell_size))
+        # Portal
+        screen.blit(portal_image, (9 * cell_size, 3 * cell_size))
+        # TelePorts
+        screen.blit(top_teleport_image, (15 * cell_size, 1 * cell_size))
+        screen.blit(down_teleport_image, (5 * cell_size, 21 * cell_size))
+
 
     def move_player(self, dx, dy, matrix_entrance):
         new_x = player_pos[0] + dx
@@ -188,7 +207,7 @@ class Agent:
         elif dx == 4 and dy == 9:
             question = "آن چیست که هرچه از آن کم کنی بیشتر میشود؟"
             answer = text_puzzle_question(screen, question)
-            if answer == "نمیدونم":
+            if answer == "حفره":
                 temp_score = self.score + 60
                 if temp_score > 2000:
                     self.bonus = self.score % 2000
