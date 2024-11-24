@@ -27,7 +27,7 @@ def impossible_maze():
     mini_screen_size = mini_grid_size * mini_cell_size
     new_screen = pygame.display.set_mode((mini_screen_size, mini_screen_size))
 
-    arrow_image = pygame.image.load('../Images/Arrow.jpg')
+    arrow_image = pygame.image.load('./Images/Arrow.jpg')
     arrow_image = pygame.transform.scale(arrow_image, (mini_cell_size, mini_cell_size))  # Scale it to fit the cell
 
     pygame.display.set_caption("Mini Maze Game")

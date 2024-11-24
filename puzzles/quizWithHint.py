@@ -8,7 +8,7 @@ def quiz_game_with_hint(screen, question, correct_answer, hints):
     pygame.init()
     
     # Initialize fonts and colors
-    farsi_font = pygame.font.Font("../assets/fonts/YekanBakh-VF.ttf", 15)
+    farsi_font = pygame.font.Font("./assets/fonts/YekanBakh-VF.ttf", 15)
     color = pygame.Color('white')
     hint_color = pygame.Color('yellow')
     input_box = pygame.Rect(50, 300, 400, 50)
