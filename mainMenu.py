@@ -1,6 +1,6 @@
 import pygame
 import sys
-from colors import WHITE, BLACK, GREEN, RED, LIGHT_BLUE
+from assets.colors import BLACK, GREEN, RED, LIGHT_BLUE
 from main import play_game
 
 pygame.init()

@@ -29,7 +29,7 @@ def wrap_text(text, font, max_width):
 def text_puzzle_question(screen, question, image_path=None):
     pygame.init()
 
-    farsi_font = pygame.font.Font("./YekanBakh-VF.ttf", 12)
+    farsi_font = pygame.font.Font("../assets/fonts/YekanBakh-VF.ttf", 12)
 
     input_box = pygame.Rect(50, 100, 400, 50)  # Adjust position for input box
     if image_path:

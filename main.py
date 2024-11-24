@@ -1,9 +1,9 @@
 import pygame
 import sys
-from map import maze
-from fog import Fog_matrix
-from fog_entrance_locations import NORTH_ENTRANCE, SOUTH_ENTRANCE, WEST_ENTRANCE, EAST_ENTRANCE
-from colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE, LIGHT_BLUE
+from maps.map import maze
+from maps.fog import Fog_matrix
+from maps.fog_entrance_locations import NORTH_ENTRANCE, SOUTH_ENTRANCE, WEST_ENTRANCE, EAST_ENTRANCE
+from assets.colors import WHITE, BLACK, RED, GREEN, BLUE, YELLOW, GRAY, PURPLE, LIGHT_BLUE
 from ImpossibleMaze4 import impossible_maze
 from battle_ship import main_battle_ship
 from quizPuzzle import text_puzzle_question
