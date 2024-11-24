@@ -8,6 +8,7 @@ from ImpossibleMaze4 import impossible_maze
 from battle_ship import main_battle_ship
 from quizPuzzle import text_puzzle_question
 from quizWithHint import quiz_game_with_hint
+from cryptoGame import play_cipher_game
 import copy
 
 # Initialize Pygame
@@ -272,6 +273,24 @@ class Agent:
                 self.score -= 10
                 print("Incorrect answer. Try again!")
                 return False
+
+        elif dx == 9 and dy == 12:
+            original_size = screen.get_size()  # Store the current screen size
+            score, is_done = play_cipher_game()  # Run the crypto game
+
+            # After the crypto game ends, reset the game window size
+            pygame.display.set_mode(original_size)  # Reset to the original game window size
+
+            if is_done:
+                self.score += score
+                self.game_maze[dx][dy] = 0
+                print(f"Cipher solved! Gained {score} points.")
+                return True
+            else:
+                self.score -= 10  # Penalty for failure
+                print("Failed to solve the cipher.")
+                return False
+
 
 
 def display_score(score):
