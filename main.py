@@ -241,7 +241,7 @@ class Agent:
 
         elif dx == 13 and dy == 10:
             question = "خاور <- دبهز, بیمار <- ثپهتس, تاس <- جپص, داور <- ؟"
-            hints = ["راهنمایی ۱: تست", "راهنمایی ۲: تست 2"]
+            hints = ["راهنمایی ۱: انتقال حروف", "راهنمایی ۲: تعداد الف به ب 3 است"]
             answer = quiz_game_with_hint(screen, question, "داور", hints)
             if answer == "داور":
                 temp_score = self.score + 60
